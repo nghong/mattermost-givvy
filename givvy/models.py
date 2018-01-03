@@ -1,4 +1,5 @@
 from django.db import models
+from django.dispatch import receiver
 
 
 class User(models.Model):
@@ -6,6 +7,12 @@ class User(models.Model):
     username = models.CharField(max_length=50, unique=True)
     heart = models.IntegerField(default=0)
     quota = models.IntegerField(default=100)
+
+
+@receiver(models.signals.post_save, sender=User)
+def execute_after_save(sender, instance, created, *args, **kwargs):
+    if created:
+        Log.objects.create(user=instance, message="Account creation.")
 
 
 class Log(models.Model):

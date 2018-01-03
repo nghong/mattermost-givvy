@@ -8,6 +8,8 @@ name = "pypi"
 [packages]
 
 django = "==2.0"
+python-decouple = "*"
+requests = "*"
 
 
 [dev-packages]

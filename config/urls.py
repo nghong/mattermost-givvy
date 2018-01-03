@@ -15,7 +15,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from givvy import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('givvy/', views.handle_mattermost_request, name='handle_mattermost_request')
 ]
