@@ -14,16 +14,14 @@ ALLOWED_HOSTS = []
 
 DJANGO_APPS = (
     'django.contrib.contenttypes',
-    'django.contrib.messages'
+    'django.contrib.messages',
 )
-
-THIRD_PARTY_APPS = ()
 
 LOCAL_APPS = (
-    'givvy.apps.GivvyConfig'
+    'givvy.apps.GivvyConfig',
 )
 
-INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
+INSTALLED_APPS = DJANGO_APPS + LOCAL_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
