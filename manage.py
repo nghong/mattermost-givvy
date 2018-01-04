@@ -4,10 +4,10 @@ import sys
 from decouple import config
 
 if __name__ == "__main__":
-    if config('PRODUCTION'):
-        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.production")
-    else:
+    if config('DJANGO_DEBUG', default=True, cast=bool):
         os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.development")
+    else:
+        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.production")
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
