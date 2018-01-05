@@ -23,6 +23,7 @@ def handle_mattermost_request(request):
     """
 
     # Check token
+    # (This is not secure but mattermost request sends token like this.)
     token = request.POST['token']
     if not(check_token(token)):
         return(HttpResponse(content="You don't have permission to view this page.", status=401))
