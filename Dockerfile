@@ -19,7 +19,7 @@ ONBUILD COPY Pipfile Pipfile
 ONBUILD COPY Pipfile.lock Pipfile.lock
 
 # -- Install dependencies:
-ONBUILD RUN set -ex && pipenv install --deploy --system
+ONBUILD RUN set -ex && pipenv install
 
 # Add the Dokku-specific files to their locations.
 ADD misc/dokku/CHECKS /app/
