@@ -2,8 +2,7 @@
   "scripts": {
     "dokku": {
       "predeploy": [
-        "cd /code/ && pipenv install",
-        "python /code/manage.py migrate --noinput"
+        "/code/manage.py migrate --noinput"
       ]
     }
   }
