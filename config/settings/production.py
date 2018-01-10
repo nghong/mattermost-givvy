@@ -5,6 +5,10 @@ SECRET_KEY = config('SECRET_KEY')
 
 DEBUG = False
 
+ALLOWED_HOSTS = [
+    config('HOST', default='')
+]
+
 USER, PASSWORD, HOST, PORT, NAME = re.match("^postgres://(?P<username>.*?)\:(?P<password>.*?)\@(?P<host>.*?)\:(?P<port>\d+)\/(?P<db>.*?)$", config("DATABASE_URL", default="")).groups()
 
 DATABASES = {
