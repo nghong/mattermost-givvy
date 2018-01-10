@@ -17,6 +17,7 @@ python-decouple = "*"
 requests = "*"
 uwsgi = "*"
 "psycopg2" = "*"
+gunicorn = "*"
 
 
 [dev-packages]
