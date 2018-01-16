@@ -31,4 +31,5 @@ COPY . /app
 COPY docker/dokku/* /app/
 
 # Let Django collect all staticfiles
+RUN mkdir /static
 RUN python /app/manage.py collectstatic --noinput
