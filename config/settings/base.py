@@ -102,7 +102,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 # STATICFILES
-STATIC_ROOT = str(ROOT_DIR('staticfiles'))
+STATIC_ROOT = str(ROOT_DIR('static'))
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (str(APPS_DIR.path('static')), )
