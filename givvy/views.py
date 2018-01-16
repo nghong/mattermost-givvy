@@ -1,7 +1,13 @@
+import environ
+
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from .utils import process_message, check_token, get_mattermost_user_from_username, create_log, give_heart
+
+from .utils import process_message, check_token, get_mattermost_user_from_username, create_log, give_heart, post_message
 from .models import User
+
+
+env = environ.Env()
 
 
 def response_message(msg, channel="", msg_type="ephemeral"):
@@ -16,6 +22,7 @@ def response_message(msg, channel="", msg_type="ephemeral"):
 
     response["response_type"] = msg_type
     return JsonResponse(response)
+
 
 @csrf_exempt
 def handle_mattermost_request(request):
@@ -79,13 +86,13 @@ def handle_mattermost_request(request):
             heart=params['heart'],
             quota=sender.quota
         )
-        response_message(
-            "{sender} has just given {recipient} {heart}❤ for {reason}.".format(
+        post_message(
+            "##### @{sender} has just given @{recipient} {heart}❤ for {reason}.".format(
                 sender=sender.username,
                 recipient=recipient.username,
                 heart=params['heart'],
                 reason=params['reason']
-            ), channel="test-site"
+            ), channel=env('GIVVY_CHANNEL', default='test-site')
         )
     else:
         msg = "Action failed. You've just tried to give a number of hearts exceeding your quota this month."

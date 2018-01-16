@@ -10,8 +10,19 @@ def check_token(token):
     return False
 
 
+def post_message(text, botname="Eva", channel="test-site", icon_url=""):
+    url = 'https://' + MATTERMOST_HOST + '/hooks/' + MATTERMOST_WEBHOOK
+    msg = {
+        "username": botname,
+        "channel": channel,
+        "icon_url": icon_url,
+        "text": text
+    }
+    requests.post(url, json=msg)
+
+
 def get_mattermost_user_from_username(username):
-    url = 'https://' + MATTERMOST_SERVER + '/api/v4/users/usernames'
+    url = 'https://' + MATTERMOST_HOST + '/api/v4/users/usernames'
     token = 'Bearer ' + MATTERMOST_REQUEST_TOKEN
     header = {'Authorization': token}
     body = '["{username}"]'.format(username=username)
@@ -33,17 +44,12 @@ def process_message(text):
             'error': 'Your syntax is invalid, please recheck it and try again.'
         }
 
-    if not(arguments[1].isdigit()):
+    try:
+        heart = int(arguments[1])
+    except ValueError:
         return {
-            'error': 'Number of heart must be an integer, please recheck it and try again.'
+            'error': 'Number of heart must be a positive integer, please recheck it and try again.'
         }
-    else:
-        try:
-            heart = int(arguments[1])
-        except ValueError:
-            return {
-                'error': 'Number of heart must be positive, please recheck it and try again.'
-            }
 
     if arguments[0][0] == '@':
         username = arguments[0][1:]
