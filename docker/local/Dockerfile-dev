@@ -1,5 +1,9 @@
-FROM python:alpine3.6
+FROM python:3.6.3-alpine3.6
 ENV PYTHONBUFFERED 1
+
+# Add new user to run the whole thing as non-root
+RUN addgroup -S app
+RUN adduser -G app -h /app -D app
 
 RUN apk add --no-cache git
 RUN set -ex && pip install git+git://github.com/pypa/pipenv.git@master
@@ -21,6 +25,7 @@ RUN apk update \
     && apk del .build-deps
 
 # Change to user and copy code
+USER app
 COPY . /app
 
 # Let Django collect all staticfiles
