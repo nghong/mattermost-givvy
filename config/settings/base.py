@@ -3,6 +3,7 @@ import environ
 
 
 ROOT_DIR = environ.Path(__file__) - 3
+APPS_DIR = ROOT_DIR.path('main')
 
 env = environ.Env()
 
@@ -100,4 +101,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
+# STATICFILES
+STATIC_ROOT = str(ROOT_DIR('staticfiles'))
 STATIC_URL = '/static/'
+
+STATICFILES_DIRS = (str(APPS_DIR.path('static')), )
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder', )
