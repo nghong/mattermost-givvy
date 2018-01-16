@@ -1,20 +1,33 @@
 import os
-from decouple import config
+import environ
 
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+ROOT_DIR = environ.Path(__file__) - 3
 
-DEBUG = config('DJANGO_DEBUG', default=False, cast=bool)
+env = environ.Env()
+
+MATTERMOST_REQUEST_TOKEN = env('DJANGO_MATTERMOST_REQUEST_TOKEN', default='')
+MATTERMOST_TOKEN = env('DJANGO_MATTERMOST_TOKEN', default='')
+MATTERMOST_SERVER = env.str('DJANGO_MATTERMOST_SEVER', default='')
+
+DEBUG = env.bool('DJANGO_DEBUG', default=True)
+
+SECRET_KEY = env(
+    'DJANGO_SECRET_KEY',
+    default='(5*z%*pi=qx2d3%=g(df^i)may7-133@0-%ve@ce-tj@kx3_8y'
+)
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
 DJANGO_APPS = (
+    'django.contrib.admin',
+    'django.contrib.auth',
     'django.contrib.contenttypes',
+    'django.contrib.sessions',
     'django.contrib.messages',
+    'django.contrib.staticfiles',
 )
 
 LOCAL_APPS = (
@@ -25,7 +38,11 @@ INSTALLED_APPS = DJANGO_APPS + LOCAL_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
@@ -49,7 +66,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators
 
@@ -68,7 +84,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
 
@@ -81,7 +96,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/

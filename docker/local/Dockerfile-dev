@@ -1,0 +1,29 @@
+FROM python:alpine3.6
+ENV PYTHONBUFFERED 1
+
+RUN apk add --no-cache git
+RUN set -ex && pip install git+git://github.com/pypa/pipenv.git@master
+
+# Copy Pipfile and install system-wide
+# We're installing system-wide, because we currently have problems
+# correctly using the entrypoint.sh, while activating the virtual environment
+COPY Pipfile Pipfile.lock /app/
+WORKDIR /app
+
+# Install build dependencies for PostgreSQL. While we're at it, also install
+# pipenv and all python requirements. Then remove unneeded build dependencies.
+RUN apk update \
+    && apk add --no-cache --virtual .build-deps \
+       gcc \
+       musl-dev \
+    && apk add --no-cache postgresql postgresql-dev \
+    && pipenv install --dev --system --verbose \
+    && apk del .build-deps
+
+# Change to user and copy code
+COPY . /app
+
+# Let Django collect all staticfiles
+# RUN python /app/manage.py collectstatic --noinput
+
+ENTRYPOINT ["/app/docker/local/entrypoint.sh"]

@@ -1,23 +1,11 @@
 from .base import *
-import re
 
-SECRET_KEY = config('SECRET_KEY')
 
-DEBUG = False
+# APPS
+INSTALLED_APPS += ("gunicorn",)
 
-ALLOWED_HOSTS = [
-    config('HOST', default='')
-]
+# ALLOWED HOSTS
+ALLOWED_HOSTS = env.list('DJANGO_ALLOWED_HOSTS')
 
-USER, PASSWORD, HOST, PORT, NAME = re.match("^postgres://(?P<username>.*?)\:(?P<password>.*?)\@(?P<host>.*?)\:(?P<port>\d+)\/(?P<db>.*?)$", config("DATABASE_URL", default="")).groups()
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': NAME,
-        'USER': USER,
-        'PASSWORD': PASSWORD,
-        'HOST': HOST,
-        'PORT': int(PORT),
-    }
-}
+# DATABASE
+DATABASES = {'default': env.db("DATABASE_URL")}

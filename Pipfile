@@ -12,13 +12,11 @@ python_version = "3.6"
 
 [packages]
 
-django = "==2.0"
-python-decouple = "*"
+Django = "==2.0"
 requests = "*"
-uwsgi = "*"
 "psycopg2" = "*"
 gunicorn = "*"
+django-environ = "*"
 
 
 [dev-packages]
-

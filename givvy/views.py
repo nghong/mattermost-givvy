@@ -3,12 +3,17 @@ from .utils import process_message, check_token, get_mattermost_user_from_userna
 from .models import User
 
 
-def response_message(msg, msg_type="ephemeral"):
+def response_message(msg, channel="", msg_type="ephemeral"):
     response = {
-        "response_type": msg_type,
+        "username": "Eva",
         "text": msg
-        #"text": "You've just given @{username} {heart}❤ of your heart. You're left with {quota}."
     }
+
+    if channel:
+        response["channel"] = channel
+        return JsonResponse(response)
+
+    response["response_type"] = msg_type
     return JsonResponse(response)
 
 
@@ -28,8 +33,22 @@ def handle_mattermost_request(request):
     if not(check_token(token)):
         return(HttpResponse(content="You don't have permission to view this page.", status=401))
 
+    # If there is no argument
+    if request.POST['text'] == '':
+        sender, created = User.objects.get_or_create(
+            pk=request.POST['user_id'],
+            defaults={'username': request.POST['user_name']}
+        )
+        msg = "You currently have {heart}❤.\nYou can give other team members {quota}❤ this month.".format(
+            heart=sender.heart,
+            quota=sender.quota
+        )
+        return response_message(msg)
+
     # Get arguments
     params = process_message(request.POST['text'])
+    if 'error' in params:
+        return response_message(params['error'])
     status, response = get_mattermost_user_from_username(params['username'])
     if status == 200:
         recipient_id = response
@@ -58,6 +77,14 @@ def handle_mattermost_request(request):
             username=params['username'],
             heart=params['heart'],
             quota=sender.quota
+        )
+        response_message(
+            "{sender} has just given {recipient} {heart}❤ for {reason}.".format(
+                sender=sender.username,
+                recipient=recipient.username,
+                heart=params['heart'],
+                reason=params['reason']
+            ), channel="test-site"
         )
     else:
         msg = "Action failed. You've just tried to give a number of hearts exceeding your quota this month."

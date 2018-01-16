@@ -1,26 +1,25 @@
-from decouple import config
 from .models import User, Log
+from config.settings.base import *
 import requests
 import json
 
 
 def check_token(token):
-    MATTERMOST_TOKEN = config('MATTERMOST_TOKEN')
     if token == MATTERMOST_TOKEN:
         return True
     return False
 
 
 def get_mattermost_user_from_username(username):
-    url = 'https://' + config('MATTERMOST_SERVER') + '/api/v4/users/usernames'
-    token = 'Bearer ' + config('MATTERMOST_REQUEST_TOKEN')
+    url = 'https://' + MATTERMOST_SERVER + '/api/v4/users/usernames'
+    token = 'Bearer ' + MATTERMOST_REQUEST_TOKEN
     header = {'Authorization': token}
     body = '["{username}"]'.format(username=username)
 
     response = requests.post(url, headers=header, data=body)
     if response.status_code == 200:
         if response.text == '[]':
-            return 404, "Recipient is not found. Please recheck your command."
+            return 404, "There is no user with username {username}. Please recheck your command.".format(username=username)
         # Get ID of the first user
         return 200, json.loads(response.text)[0]['id']
     return response.status_code, "Unknown error. Status code: {}".format(response.status_code)
@@ -29,11 +28,28 @@ def get_mattermost_user_from_username(username):
 def process_message(text):
     arguments = text.split(' ')
 
+    if len(arguments) < 2:
+        return {
+            'error': 'Your syntax is invalid, please recheck it and try again.'
+        }
+
+    if not(arguments[1].isdigit()):
+        return {
+            'error': 'Number of heart must be an integer, please recheck it and try again.'
+        }
+    else:
+        try:
+            heart = int(arguments[1])
+        except ValueError:
+            return {
+                'error': 'Number of heart must be positive, please recheck it and try again.'
+            }
+
     if arguments[0][0] == '@':
         username = arguments[0][1:]
     else:
         username = arguments[0]
-    heart = arguments[1]
+
     if arguments[2].lower() == 'for':
         reason = " ".join(arguments[3:])
     else:
@@ -41,7 +57,7 @@ def process_message(text):
 
     return {
         'username': username,
-        'heart': int(heart),
+        'heart': heart,
         'reason': reason
     }
 
