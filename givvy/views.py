@@ -1,4 +1,5 @@
 from django.http import JsonResponse, HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 from .utils import process_message, check_token, get_mattermost_user_from_username, create_log, give_heart
 from .models import User
 
@@ -16,7 +17,7 @@ def response_message(msg, channel="", msg_type="ephemeral"):
     response["response_type"] = msg_type
     return JsonResponse(response)
 
-
+@csrf_exempt
 def handle_mattermost_request(request):
     """
     Handle requests sent from Mattermost.
