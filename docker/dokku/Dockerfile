@@ -2,8 +2,8 @@ FROM python:3.6.3-alpine3.6
 ENV PYTHONBUFFERED 1
 
 # Add new user to run the whole thing as non-root
-RUN addgroup -S app
-RUN adduser -G app -h /app -D app
+# RUN addgroup -S app
+# RUN adduser -G app -h /app -D app
 
 # Copy Pipfile and install system-wide
 # We're installing system-wide, because we currently have problems
@@ -24,7 +24,7 @@ RUN apk update \
     && apk del .build-deps
 
 # Change to user and copy code
-USER app
+# USER app
 COPY . /app
 
 # Copy dokku specific files
