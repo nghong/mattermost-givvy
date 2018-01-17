@@ -7,6 +7,7 @@ from django.views.decorators.csrf import csrf_exempt
 from contact.models import Contact
 from givvy.models import User
 from givvy.views import response_message
+from givvy.utils import get_mattermost_user_from_username
 
 
 env = environ.Env()
@@ -36,3 +37,30 @@ def contact_request(request):
             "`/contact add email <email address>`."
         )
         return response_message(msg)
+
+    arguments = request.POST['text'].split(' ')
+
+    if len(arguments) <= 1:
+        if arguments[0][0] == '@':
+            username = arguments[0][1:]
+        else:
+            username = arguments[0]
+
+        status, response = get_mattermost_user_from_username(username)
+
+        if status == 200:
+            target, created = User.objects.get_or_create(
+                pk=response,
+                defaults={'username': username}
+            )
+            target_contact, created = Contact.objects.get_or_create(user=target)
+            msg = (
+                "@" + username + " contact info:\n"
+                "* Phone: " + target_contact.phone + "\n"
+                "* Email: " + target_contact.email + "\n"
+            )
+            return response_message(msg)
+        elif status == 404:
+            return response_message(response)
+        else:
+            return response_message(response)
