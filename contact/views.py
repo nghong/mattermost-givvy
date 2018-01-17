@@ -1,7 +1,6 @@
 import environ
-import requests
 
-from django.http import JsonResponse, HttpResponse
+from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from contact.models import Contact
@@ -25,9 +24,10 @@ def contact_request(request):
         defaults={'username': request.POST['user_name']}
     )
 
+    contact, created = Contact.objects.get_or_create(user=user)
+
     # If there is no argument
     if request.POST['text'] == '':
-        contact, created = Contact.objects.get_or_create(user=user)
         msg = (
             "Your current contact info:\n"
             "* Phone: " + contact.phone + "\n"
@@ -40,7 +40,15 @@ def contact_request(request):
 
     arguments = request.POST['text'].split(' ')
 
-    if len(arguments) <= 1:
+    if arguments[0].lower() == 'add' and len(arguments) >= 3:
+        if arguments[1].lower() == 'phone' and arguments[2]:
+            contact.phone = arguments[2]
+        if arguments[1].lower() == 'email' and arguments[2]:
+            contact.email = arguments[2]
+        contact.save()
+        return response_message("Your contact info has been updated.")
+
+    if len(arguments) <= 1 and arguments[0].lower() != 'add':
         if arguments[0][0] == '@':
             username = arguments[0][1:]
         else:
@@ -64,3 +72,5 @@ def contact_request(request):
             return response_message(response)
         else:
             return response_message(response)
+
+    return response_message("Your syntax is invalid. Please recheck and try again.")
