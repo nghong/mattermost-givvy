@@ -10,22 +10,15 @@ from .models import User
 env = environ.Env()
 
 
-def response_message(msg, channel="", msg_type="ephemeral"):
-    response = {
-        "username": "Eva",
-        "text": msg
-    }
-
-    if channel:
-        response["channel"] = channel
-        return JsonResponse(response)
-
-    response["response_type"] = msg_type
-    return JsonResponse(response)
+def response_message(msg, msg_type="ephemeral"):
+    return JsonResponse({
+        "text": msg,
+        "response_type": msg_type
+    })
 
 
 @csrf_exempt
-def handle_mattermost_request(request):
+def give_request(request):
     """
     Handle requests sent from Mattermost.
     1. Check token
