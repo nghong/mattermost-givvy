@@ -5,6 +5,9 @@ ENV PYTHONBUFFERED 1
 # RUN addgroup -S app
 # RUN adduser -G app -h /app -D app
 
+RUN apk add --no-cache git
+RUN set -ex && pip install git+git://github.com/pypa/pipenv.git@master
+
 # Copy Pipfile and install system-wide
 # We're installing system-wide, because we currently have problems
 # correctly using the entrypoint.sh, while activating the virtual environment
@@ -19,7 +22,6 @@ RUN apk update \
        gcc \
        musl-dev \
     && apk add --no-cache postgresql postgresql-dev \
-    && pip install pipenv \
     && pipenv install --system --verbose \
     && apk del .build-deps
 
