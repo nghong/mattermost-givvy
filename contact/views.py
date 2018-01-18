@@ -38,7 +38,7 @@ def contact_request(request):
         )
         return response_message(msg)
 
-    arguments = request.POST['text'].split(' ')
+    arguments = request.POST['text'].strip().split(' ')
 
     if arguments[0].lower() == 'add' and len(arguments) >= 3:
         if arguments[1].lower() == 'phone' and arguments[2]:

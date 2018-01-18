@@ -37,7 +37,7 @@ def get_mattermost_user_from_username(username):
 
 
 def process_message(text):
-    arguments = text.split(' ')
+    arguments = text.strip().split(' ')
 
     if len(arguments) < 2:
         return {
