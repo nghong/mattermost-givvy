@@ -5,7 +5,7 @@ import json
 
 
 def check_token(token):
-    if token == MATTERMOST_TOKEN:
+    if token == MATTERMOST_GIVE_TOKEN:
         return True
     return False
 
