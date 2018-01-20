@@ -27,7 +27,7 @@ server {
     proxy_set_header X-Request-Start $msec;
   }
   location /static/  {
-  alias /var/lib/dokku/data/storage/nv-tools-static/;
+  alias {{ var "NGINX_STATIC_FOLDER" }};
   }
   include {{ .DOKKU_ROOT }}/{{ .APP }}/nginx.conf.d/*.conf;
 }
